@@ -1,8 +1,8 @@
 # Single-cell RNA-seq analysis of mouse thoracolumbar sympathetic ganglia
 
-This repository contains R scripts used for the analysis and visualization of 10x Genomics single-cell RNA-seq data from mouse thoracolumbar sympathetic ganglia (SG) collected at the T12/T13/L1 levels.
+This repository contains an R script used for the analysis and visualization of 10x Genomics single-cell RNA-seq data from mouse thoracolumbar sympathetic ganglia (SG) collected at the T12/T13/L1 levels.
 
-The analysis includes quality control, preprocessing, clustering, cell-type annotation, sympathetic neuron subclustering, marker gene visualization, and differential gene expression analysis.
+The analysis includes quality control, preprocessing, clustering, manual cell-type annotation, sympathetic neuron subclustering, and marker gene visualization.
 
 ## Data
 
@@ -23,6 +23,15 @@ The GEO accession number will be added upon release.
 ├── README.md
 ├── scripts/
 │   └── SG_scRNAseq_analysis.R
+├── data/
+│   ├── data1/
+│   │   ├── barcodes.tsv.gz
+│   │   ├── features.tsv.gz
+│   │   └── matrix.mtx.gz
+│   └── data2/
+│       ├── barcodes.tsv.gz
+│       ├── features.tsv.gz
+│       └── matrix.mtx.gz
 └── output/
 ```
 
@@ -46,7 +55,14 @@ Package versions may vary depending on the R environment. Users are advised to i
 
 ## Input files
 
-The script expects 10x Genomics-formatted matrix files for each sample:
+The script expects two 10x Genomics-formatted input directories:
+
+```text
+data/data1/
+data/data2/
+```
+
+Each input directory should contain:
 
 ```text
 barcodes.tsv.gz
@@ -54,10 +70,25 @@ features.tsv.gz
 matrix.mtx.gz
 ```
 
-The input data directory should be modified in the script before running:
+The script automatically detects the project root when run from the `scripts/` directory and reads input files from:
 
-```r
-data_path <- "path/to/data/"
+```text
+./data/data1
+./data/data2
+```
+
+## Running the analysis
+
+Run the main analysis script from the repository root:
+
+```bash
+Rscript scripts/SG_scRNAseq_analysis.R
+```
+
+All generated plots will be saved to:
+
+```text
+./output/
 ```
 
 ## Analysis workflow
@@ -65,22 +96,24 @@ data_path <- "path/to/data/"
 The main analysis script performs the following steps:
 
 1. Load 10x Genomics single-cell count matrices using `Read10X`.
-2. Create Seurat objects and merge samples.
-3. Perform quality control based on:
-   - number of detected genes
-   - total UMI counts
-   - mitochondrial gene percentage
-4. Normalize data and identify highly variable genes.
-5. Perform PCA, UMAP dimensionality reduction and clustering.
-6. Annotate major SG cell populations using canonical marker genes.
-7. Visualize marker gene expression using UMAP feature plots, violin plots and dot plots.
-8. Subset sympathetic neurons and perform subclustering.
-9. Identify cluster-enriched genes and visualize selected marker genes.
-10. Analyze expression of genes related to GAG metabolism, including `Gusb`.
+2. Create Seurat objects for `data1` and `data2`.
+3. Merge the two Seurat objects.
+4. Calculate mitochondrial gene percentage.
+5. Generate quality-control violin plots.
+6. Filter cells based on detected genes, UMI counts, and mitochondrial gene percentage.
+7. Normalize data and identify highly variable genes.
+8. Scale data and perform PCA.
+9. Generate a PCA elbow plot.
+10. Perform neighbor finding, clustering, and UMAP dimensionality reduction.
+11. Annotate major SG cell populations manually based on known marker genes.
+12. Visualize annotated cell populations and marker gene expression.
+13. Subset sympathetic neurons.
+14. Perform quality control, normalization, clustering, and UMAP analysis for sympathetic neurons.
+15. Generate selected visualization plots for sympathetic neuron subclusters and marker genes.
 
 ## Cell-type annotation
 
-Major cell populations were annotated based on canonical marker genes, including:
+Major cell populations are annotated manually in the script, including:
 
 - Sympathetic neurons
 - Schwann cells
@@ -95,15 +128,21 @@ The script generates representative analysis outputs, including:
 
 - quality-control violin plots
 - PCA elbow plot
-- UMAP plots
+- UMAP clustering plots
+- manual cell-type annotation plots
 - marker gene dot plots
-- feature plots
+- `Gusb` violin and feature plots
 - sympathetic neuron subcluster plots
-- differential expression results
-- selected gene expression visualizations
+- selected `Gusb` and `Th` expression plots
+
+All output files are saved directly in:
+
+```text
+./output/
+```
 
 ## Notes
 
-Before running the script, users should update local file paths and sample names according to their own directory structure.
+This repository provides the analysis code used for data processing and figure generation.
 
-This repository provides the analysis code used for data processing and figure generation. Raw sequencing files and processed count matrices will be deposited in GEO.
+Raw sequencing files and processed count matrices will be deposited in GEO.
