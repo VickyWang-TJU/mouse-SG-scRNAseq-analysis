@@ -24,8 +24,6 @@ The GEO accession number will be added upon release.
 ├── scripts/
 │   └── SG_scRNAseq_analysis.R
 └── output/
-    ├── figures/
-    └── tables/
 ```
 
 ## Requirements
