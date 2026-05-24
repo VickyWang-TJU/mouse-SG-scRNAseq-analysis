@@ -108,4 +108,4 @@ The script generates representative analysis outputs, including:
 
 Before running the script, users should update local file paths and sample names according to their own directory structure.
 
-This repository provides the analysis code used for data processing and figure generation. Raw sequencing files and processed count matrices are deposited separately in GEO.
+This repository provides the analysis code used for data processing and figure generation. Raw sequencing files and processed count matrices will be deposited in GEO.
